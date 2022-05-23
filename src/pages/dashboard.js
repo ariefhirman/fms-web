@@ -12,6 +12,10 @@ import { products } from '../__mocks__/products';
 import AuthService from 'src/service/auth.service';
 import ConfigService from 'src/service/config.service';
 import DetectionService from 'src/service/detection.service';
+import socketClientContext from 'src/context/socketContext';
+// import io from 'socket.io-client';
+
+// const socket = io('http://127.0.0.1:6868');
 
 const getLayoutState = (products, state) => {
   for (let i in products) {
@@ -32,10 +36,39 @@ const Dashboard = () => {
 
   getLayoutState(products, initialState);
 
+  // const [isConnected, setIsConnected] = React.useState(socket.connected);
+  const [lastMessage, setLastMessage] = React.useState(null);
+  const socket = React.useContext(socketClientContext);
+  // console.log(socket);
+
   const [data, setData] = React.useState();
   const [progress, setProgress] = React.useState(initialState);
   const [statusTable, setStatusTable] = React.useState('')
   const [tableLayout, setTableLayout] = React.useState(true);
+
+  React.useEffect(() => {
+    socket.on('connect', () => {
+      console.log("connected");
+      // setIsConnected(true);
+    });
+    socket.on('disconnect', () => {
+      console.log("disconnected");
+      // setIsConnected(false);
+    });
+    socket.on('message', data => {
+      console.log(data);
+      setLastMessage(data);
+    });
+    socket.on('start', data => {
+      console.log(data);
+      // setLastMessage(data);
+    });
+    return () => {
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off('message');
+    };
+  }, [])
 
   // const getProductDetectionList = (data) => {
   //   console.log(data);

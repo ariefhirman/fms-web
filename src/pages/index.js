@@ -6,6 +6,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Box, Button, Container, Grid, Link, TextField, Typography, Divider } from '@mui/material';
 import AuthService from 'src/service/auth.service';
+import socket from "src/service/socket"; 
 
 const Login = () => {
   useEffect(() => {
@@ -16,6 +17,11 @@ const Login = () => {
       // pindah kalo udh login
     }}
   );
+
+  useEffect(() => {
+    console.log(socket);
+    socket.on("test-2", (data) => console.log(data));
+  })
   
   const router = useRouter();
   const formik = useFormik({
@@ -63,7 +69,7 @@ const Login = () => {
   return (
     <>
       <Head>
-        <title>Login | Material Kit</title>
+        <title>Login | Warehouse Drone</title>
       </Head>
       <Box
         component="main"

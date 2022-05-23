@@ -6,6 +6,7 @@ import { DashboardLayout } from '../components/dashboard-layout';
 import { DroneArrangement } from 'src/components/dashboard/drone-arrangement';
 import { ItemMatrixConfig } from 'src/components/item/item-matrix-config';
 import mqttClientContext from 'src/context/mqttContext';
+import socketClientContext from 'src/context/socketContext';
 import topicMqttContext from 'src/context/topicContext';
 import droneArrangementContext from 'src/context/mission-config/droneArrangementContext';
 import Modal from '@mui/material/Modal';
@@ -66,15 +67,16 @@ const MissionConfig = () => {
   const [turningPoint, setTurningPoint] = React.useState();
   const [openPopupStartMission, setOpenPopupStartMission] = React.useState(false);
   const [openPopupRestartMission, setOpenPopupRestartMission] = React.useState(false);
-  const client = React.useContext(mqttClientContext);
+  // const client = React.useContext(mqttClientContext);
+  const socket = React.useContext(socketClientContext);
   const mqttTopic = React.useContext(topicMqttContext)
   
   // subscibe
-  client.subscribe(mqttTopic.topicConfig.drone_name);
-  client.subscribe(mqttTopic.topicConfig.drone_connection);
-  client.subscribe(mqttTopic.topicConfig.drone_battery);
-  client.subscribe(mqttTopic.topicConfig.drone_flight_control);
-  client.subscribe(mqttTopic.topicMissionStarted);
+  // client.subscribe(mqttTopic.topicConfig.drone_name);
+  // client.subscribe(mqttTopic.topicConfig.drone_connection);
+  // client.subscribe(mqttTopic.topicConfig.drone_battery);
+  // client.subscribe(mqttTopic.topicConfig.drone_flight_control);
+  // client.subscribe(mqttTopic.topicMissionStarted);
 
   const arrangementContext = {
     drone_name: droneName,
@@ -82,6 +84,92 @@ const MissionConfig = () => {
     battery_level: batteryLevel,
     flight_control: flightControl
   };
+
+  React.useEffect(() => {
+    socket.on('connect', () => {
+      console.log("connected");
+      // setIsConnected(true);
+    });
+    socket.on('disconnect', () => {
+      console.log("disconnected");
+      // setIsConnected(false);
+    });
+    socket.on(mqttTopic.topicConfig.drone_name, data => {
+      console.log(data);
+      setDroneName(data);
+    });
+    socket.on(mqttTopic.topicConfig.drone_connection, data => {
+      console.log(data);
+      setConnectionStatus(data);
+      localStorage.setItem("droneConnection", data);
+    });
+    socket.on(mqttTopic.topicConfig.drone_battery, data => {
+      console.log(data);
+      setBatteryLevel(data);
+    });
+    socket.on(mqttTopic.topicConfig.drone_flight_control, data => {
+      console.log(data);
+      setFlightControl(data);
+      localStorage.setItem("flighControl", data);
+    });
+    socket.on(mqttTopic.topicMissionStarted, data => {
+      console.log(data);
+      if (data == 'started' || data == 'Started') {
+        setOpenPopupStartMission(true);
+      }
+    });
+    socket.on("discovery:drone", data => {
+      console.log(data);
+    })
+    return () => {
+      socket.off('connect');
+      socket.off('disconnect');
+      socket.off(mqttTopic.topicConfig.drone_name);
+      socket.off(mqttTopic.topicConfig.drone_connection);
+      socket.off(mqttTopic.topicConfig.drone_battery);
+      socket.off(mqttTopic.topicConfig.drone_flight_control);
+      socket.off(mqttTopic.topicMissionStarted);
+    };
+  })
+
+  // let note;
+  // React.useEffect(() => {
+  //   client.on('message', function (topic, message) {
+  //     if (topic == mqttTopic.topicConfig.drone_name) {
+  //       note = message.toString();
+  //       setDroneName(note);
+  //     } else if (topic == mqttTopic.topicConfig.drone_connection) {
+  //       note = message.toString();
+  //       setConnectionStatus(note);
+  //       localStorage.setItem("droneConnection", note);
+  //     } else if (topic == mqttTopic.topicConfig.drone_battery) {
+  //       note = message.toString();
+  //       setBatteryLevel(note);
+  //     } else if (topic == mqttTopic.topicConfig.drone_flight_control) {
+  //       note = message.toString();
+  //       setFlightControl(note);
+  //       localStorage.setItem("flightControl", note);
+  //     } else if (topic == mqttTopic.topicMissionStarted) {
+  //       note = message.toString();
+  //       if (note == 'started' || note == 'Started') {
+  //         setOpenPopupStartMission(true);
+  //         // router.push('/success-launched');
+  //       }
+  //     }
+  //     // client.end();
+  //   });
+  // });
+
+  React.useEffect(() => {
+    setConnectionStatus(getConnection());
+    setFlightControl(getFlightControl);
+    // if (restartMission) {
+    //   publishMessage(mqttTopic.topicRestartMission, 'true', resMessage);
+    //   publishMessage(mqttTopic.topicStartMission, 'true', resMessage);
+    //   handleRestartPopup();
+    //   setRestartMission(false);
+    // }
+  })
 
   // OBSOLETE
   // const checkMultiRow = (sweepConfig) => {
@@ -308,6 +396,8 @@ const MissionConfig = () => {
 
   const handleCallbackStatus = (data) => {
     setStartMission(data);
+    socket.emit("test", true);
+    socket.emit("discovery", true);
   }
 
   const handleCallbackDroneConfig = (data) => {
@@ -348,7 +438,7 @@ const MissionConfig = () => {
       arrRack = fillRackArray(sweepConfig);
       arrRackID = getArrayRackID(sweepConfig);
     }
-    publishMessage(mqttTopic.topicStartMission, 'true', resMessage);
+    // publishMessage(mqttTopic.topicStartMission, 'true', resMessage);
     if (droneConfig) {
       dataConfig = {
         id: uuid.v4(),
@@ -397,45 +487,6 @@ const MissionConfig = () => {
     console.log(dataConfig);
     setStartMission(false)
   }
-
-  let note;
-  React.useEffect(() => {
-    client.on('message', function (topic, message) {
-      if (topic == mqttTopic.topicConfig.drone_name) {
-        note = message.toString();
-        setDroneName(note);
-      } else if (topic == mqttTopic.topicConfig.drone_connection) {
-        note = message.toString();
-        setConnectionStatus(note);
-        localStorage.setItem("droneConnection", note);
-      } else if (topic == mqttTopic.topicConfig.drone_battery) {
-        note = message.toString();
-        setBatteryLevel(note);
-        localStorage.setItem("flightControl", note);
-      } else if (topic == mqttTopic.topicConfig.drone_flight_control) {
-        note = message.toString();
-        setFlightControl(note);
-      } else if (topic == mqttTopic.topicMissionStarted) {
-        note = message.toString();
-        if (note == 'started' || note == 'Started') {
-          setOpenPopupStartMission(true);
-          // router.push('/success-launched');
-        }
-      }
-      // client.end();
-    });
-  });
-
-  React.useEffect(() => {
-    setConnectionStatus(getConnection());
-    setFlightControl(getFlightControl);
-    if (restartMission) {
-      publishMessage(mqttTopic.topicRestartMission, 'true', resMessage);
-      publishMessage(mqttTopic.topicStartMission, 'true', resMessage);
-      handleRestartPopup();
-      setRestartMission(false);
-    }
-  })
 
   // React.useEffect(() => {
   //   let isUser = AuthService.getCurrentUser();

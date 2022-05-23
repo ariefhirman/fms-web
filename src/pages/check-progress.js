@@ -84,7 +84,6 @@ const CheckProgress = () => {
   const getIndexRack = (detectionRack) => {
     let index;
     let rackID = detectionRack.split("-")[0];
-    // let rackID = detectionRack.substring(0,2);
     let prefix = rackID[0]
     let suffix = parseInt(rackID.substring(1));
     switch(prefix) {

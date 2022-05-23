@@ -37,6 +37,10 @@ const App = (props) => {
           name="viewport"
           content="initial-scale=1, width=device-width"
         />
+        <link
+          href="https://fonts.google.com/specimen/Outfit?query=outfit"
+          rel="stylesheet"
+        />
       </Head>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <ThemeProvider theme={theme}>

@@ -3,7 +3,8 @@ import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { DashboardNavbar } from './dashboard-navbar';
 import { DashboardSidebar } from './dashboard-sidebar';
-import mqttClientContext from 'src/context/mqttContext';
+import socketClientContext from 'src/context/socketContext';
+import io from 'socket.io-client';
 
 const DashboardLayoutRoot = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -16,15 +17,17 @@ const DashboardLayoutRoot = styled('div')(({ theme }) => ({
 }));
 
 export const DashboardLayout = (props) => {
-  var mqtt    = require('mqtt');
-  var options = {
-    username: 'admin',
-    password: '1234',	
-  };
-  var client  = mqtt.connect('mqtt://localhost:9005', options);
+  const socket = io('http://127.0.0.1:6868');
+  // var mqtt    = require('mqtt');
+  // var options = {
+  //   username: 'admin',
+  //   password: '1234',	
+  // };
+  // var client  = mqtt.connect('ws://127.0.0.1:15674', options);
   const { children } = props;
   const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const [mqttClient, setMqttClient] = useState(client);
+  const [socketClient, setSocketClient] = useState(socket);
+  // const [mqttClient, setMqttClient] = useState(client);
 
   return (
     <>
@@ -37,9 +40,13 @@ export const DashboardLayout = (props) => {
             width: '100%'
           }}
         >
-          <mqttClientContext.Provider value={mqttClient}>
+          <socketClientContext.Provider value={socketClient}>
             {children}
-          </mqttClientContext.Provider>
+          </socketClientContext.Provider>
+          {/* {children} */}
+          {/* <mqttClientContext.Provider value={mqttClient}>
+            {children}
+          </mqttClientContext.Provider> */}
         </Box>
       </DashboardLayoutRoot>
       <DashboardNavbar onSidebarOpen={() => setSidebarOpen(true)} />

@@ -3,7 +3,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Box, Button, Container, Grid, Link, TextField, Typography, Divider } from '@mui/material';
+import { Box, Button, Container, Grid, Card, TextField, Typography, Divider, CardContent } from '@mui/material';
 
 const Login = () => {
   const router = useRouter();
@@ -41,7 +41,7 @@ const Login = () => {
   return (
     <>
       <Head>
-        <title>Login | Material Kit</title>
+        <title>Login | Warehouse System</title>
       </Head>
       <Box
         component="main"
@@ -50,6 +50,7 @@ const Login = () => {
           display: 'flex',
           flexGrow: 1,
           minHeight: '100%',
+          backgroundImage: 'url("static/images/home-bg.png")',
           backgroundColor: 'neutral.900',
         }}
       >
@@ -65,103 +66,151 @@ const Login = () => {
                   xs={12}
                   md={6}
                   lg={6}
-                  justify="center" 
+                  direction="row"
+                  justifyContent="center" 
                   alignItems="center"
                   // style={{ borderRight: '0.1em solid black' }}
-                >
+              >
+                <Grid item>
                   <img
                     alt="panasonic-logo"
-                    src="/static/images/panasonic-logo.png"
+                    src="/static/images/drone-logo.png"
                     style={{
-                      height: '5rem',
-                      width: '30rem'
+                      height: '7rem',
+                      width: '7rem',
+                      marginLeft: '33%',
+                      marginRight: '33%',
+                      marginBottom: '1em'
                     }}
-                    align="center"
                   />
-                  <Divider 
-                    orientation="vertical" 
-                    flexItem
+                  <Typography
+                    color="#fff"
+                    variant="h3"
+                    textAlign="center"
+                  >
+                    Warehouse Drone
+                  </Typography>
+                  <Typography
+                    color="#fff"
+                    variant="h5"
+                    textAlign="center"
                     sx={{
-                      margin: '2.5em'
-                    }} 
-                  />
+                      fontWeight: 'light',
+                      marginBottom: '0.5em'
+                    }}
+                  >
+                    Management System
+                  </Typography>
+                </Grid>
               </Grid>
               <Grid
                   item
                   xs={12}
                   md={6}
-                  lg={6}
-                  
+                  lg={6}     
                 >
-                <Typography
-                  color="#fff"
-                  variant="h3"
-                  align="center"
-                  sx={{
-                    marginBottom: '0.5em'
-                  }}
+                <Card sx={{
+                  backgroundColor: '#4B576A',
+                  minHeight: "85vh"
+                }}
                 >
-                  Login
-                </Typography>
-                <TextField
-                  color='secondary'
-                  error={Boolean(formik.touched.email && formik.errors.email)}
-                  fullWidth
-                  helperText={formik.touched.email && formik.errors.email}
-                  label="Email Address"
-                  margin="normal"
-                  name="email"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  type="email"
-                  value={formik.values.email}
-                  variant="outlined"
-                  sx={{ input: { color: '#FFF' } }}
-                />
-                <TextField
-                  error={Boolean(formik.touched.ipAddress && formik.errors.ipAddress)}
-                  fullWidth
-                  helperText={formik.touched.ipAddress && formik.errors.ipAddress}
-                  label="Mobile App IP Adress"
-                  margin="normal"
-                  name="ip_address"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  type="text"
-                  value={formik.values.ipAddress}
-                  variant="outlined"
-                  sx={{ input: { color: '#FFF' } }}
-                />
-                <TextField
-                  error={Boolean(formik.touched.password && formik.errors.password)}
-                  fullWidth
-                  helperText={formik.touched.password && formik.errors.password}
-                  label="Password"
-                  margin="normal"
-                  name="password"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  type="password"
-                  value={formik.values.password}
-                  variant="outlined"
-                  sx={{ input: { color: '#FFF' } }}
-                />
-                <Box sx={{ py: 2 }}>
-                  <Button
-                    color="primary"
-                    disabled={formik.isSubmitting}
-                    fullWidth
-                    size="large"
-                    type="submit"
-                    variant="contained"
+                  <CardContent
+                    sx={{
+                      marginLeft: "8%",
+                      marginRight: "8%",
+                      marginTop: '12%',
+                      marginBottom: '12%'
+                    }}
                   >
-                    Login
-                  </Button>
-                </Box>
-                </Grid>
+                    <Typography
+                      color="#fff"
+                      variant="h5"
+                      align="center"
+                      sx={{
+                        marginBottom: '1.5em'
+                      }}
+                    >
+                      Sign in
+                    </Typography>
+                    <TextField
+                      color='secondary'
+                      error={Boolean(formik.touched.email && formik.errors.email)}
+                      fullWidth
+                      helperText={formik.touched.email && formik.errors.email}
+                      label="Email Address"
+                      margin="normal"
+                      name="email"
+                      onBlur={formik.handleBlur}
+                      onChange={formik.handleChange}
+                      type="email"
+                      value={formik.values.email}
+                      variant="outlined"
+                      sx={{ input: { color: '#FFF' } }}
+                    />
+                    <TextField
+                      error={Boolean(formik.touched.ipAddress && formik.errors.ipAddress)}
+                      fullWidth
+                      helperText={formik.touched.ipAddress && formik.errors.ipAddress}
+                      label="Mobile App IP Adress"
+                      margin="normal"
+                      name="ip_address"
+                      onBlur={formik.handleBlur}
+                      onChange={formik.handleChange}
+                      type="text"
+                      value={formik.values.ipAddress}
+                      variant="outlined"
+                      sx={{ input: { color: '#FFF' } }}
+                    />
+                    <TextField
+                      error={Boolean(formik.touched.password && formik.errors.password)}
+                      fullWidth
+                      helperText={formik.touched.password && formik.errors.password}
+                      label="Password"
+                      margin="normal"
+                      name="password"
+                      onBlur={formik.handleBlur}
+                      onChange={formik.handleChange}
+                      type="password"
+                      value={formik.values.password}
+                      variant="outlined"
+                      sx={{ input: { color: '#FFF' } }}
+                    />
+                    <Box sx={{ py: 2 }}>
+                      <Button
+                        color="action"
+                        disabled={formik.isSubmitting}
+                        fullWidth
+                        size="large"
+                        type="submit"
+                        variant="contained"
+                      >
+                        Login
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
             </Grid>
           </form>
         </Container>
+        <footer style={{
+          position: 'absolute',
+          bottom: '0',
+          left: '20%',
+          right: '20%'
+        }}>
+          <Typography
+            color="#fff"
+            variant="subtitle"
+            textAlign="center"
+            sx={{
+              fontWeight: 'light',
+              marginBottom: '0.5em'
+            }}
+          >
+            Copyright © 2022 CAD-IT All Rights Reserved.
+          </Typography>
+        </footer>
       </Box>
     </>
   );
